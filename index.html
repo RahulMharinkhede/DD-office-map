@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Deputy Director of Health Service, Nagpur Circle, Nagpur Office - Interactive Map</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            touch-action: manipulation;
+        }
+        .container {
+            width: 100%;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            font-size: 18px;
+            margin: 8px 0;
+        }
+        .map-container {
+            position: relative;
+            border: 2px solid #333;
+            margin: 10px 0;
+            background-color: #fff;
+            height: 70vh;
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+        .map-content {
+            position: relative;
+            width: 1000px;
+            height: 1060px;
+            transform-origin: 0 0;
+        }
+        .room {
+            position: absolute;
+            background-color: rgba(136, 191, 184, 0.5);
+            border: 1px solid #333;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .room.highlight {
+            background-color: rgba(255, 215, 0, 0.7);
+        }
+        .corridor {
+            position: absolute;
+            background-color: rgba(242, 227, 240, 0.7);
+            border: 1px dashed #999;
+        }
+        .entrance {
+            position: absolute;
+            background-color: rgba(100, 200, 100, 0.7);
+            border: 2px solid #060;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .water {
+            position: absolute;
+            background-color: rgba(100, 180, 255, 0.7);
+            border: 1px solid #009;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+        }
+        .road {
+            position: absolute;
+            background-color: rgba(100, 100, 100, 0.3);
+            border: 1px solid #555;
+        }
+        .instructions {
+            background-color: #e9f7ef;
+            padding: 8px;
+            border-radius: 5px;
+            margin-bottom: 8px;
+        }
+        .destination-selector {
+            margin: 8px 0;
+            padding: 8px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+        }
+        .legend {
+            margin-top: 8px;
+            padding: 8px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-right: 10px;
+            margin-bottom: 5px;
+            flex: 0 0 calc(50% - 10px);
+        }
+        .legend-color {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            margin-right: 5px;
+        }
+        select {
+            padding: 10px;
+            width: 100%;
+            font-size: 16px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 12px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            width: 100%;
+            font-size: 16px;
+            margin-bottom: 5px;
+            touch-action: manipulation;
+        }
+        .you-are-here {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background-color: red;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 5px rgba(0,0,0,0.5);
+            z-index: 100;
+            margin-left: -12px;
+            margin-top: -12px;
+            display: none;
+        }
+        .you-are-here.active {
+            display: block;
+        }
+        .l-shaped-room {
+            position: absolute;
+            background-color: rgba(136, 191, 184, 0.5);
+            border: 1px solid #333;
+        }
+        .l-shaped-room.highlight {
+            background-color: rgba(255, 215, 0, 0.7);
+        }
+        
+        /* Remove the inner border between Room 1 parts */
+        #room1 {
+            border-bottom: none;
+        }
+        #room1-extension {
+            border-top: none;
+        }
+        
+        /* Door styling */
+        .door {
+            position: absolute;
+            background-color: #8B4513;
+            width: 20px;
+            height: 6px;
+            z-index: 10;
+        }
+        
+        .door.vertical {
+            width: 6px;
+            height: 20px;
+        }
+        
+        .door.highlight {
+            background-color: #FF8C00;
+        }
+        
+        /* Legend for door */
+        .legend-color.door {
+            background-color: #8B4513;
+        }
+       .employee-list {
+             margin-top: 8px;
+             padding: 8px;
+             background-color: #fff;
+             border: 1px solid #ddd;
+             border-radius: 5px;
+       }
+       .employee-list h3 {
+             margin: 0 0 8px 0;
+             font-size: 16px;
+             color: #333;
+       }
+       .employee-list table {
+             width: 100%;
+             border-collapse: collapse;
+       }
+       .employee-list th,
+       .employee-list td {
+             padding: 8px;
+             border: 1px solid #ddd;
+             text-align: left;
+             font-size: 14px;
+       }
+       .employee-list th {
+             background-color: #f2f2f2;
+             font-weight: bold;
+       }
+       .employee-list td {
+             background-color: #fff;
+       }
+       .employee-list .no-employees {
+             font-style: italic;
+             color: #666;
+             padding: 8px;
+       }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Deputy Director of Health Service Office - Interactive Map</h1>
+        
+        <div class="instructions">
+            <p>Use this map to navigate through our office building. Select your destination from the dropdown below or click directly on a room. Pinch to zoom in and out on mobile devices.</p>
+        </div>
+        
+        <div class="destination-selector">
+            <label for="destination">I'm looking for: </label>
+            <select id="destination">
+                <option value="">Select a location</option>
+                <option value="room1">Room 1:Deputy Director's Chamber</option>
+                <option value="room2">Room 2:Assistant Director's (Medical) Chamber</option>
+                <option value="room3">Room 3:Chief Administrative Officer's Chamber</option>
+                <option value="room4">Room 4:Video Conference Room</option>
+                <option value="room5">Room 5:Visitor's Waiting Area</option>
+                <option value="room6">Room 6:Personal Assistant Room</option>
+                <option value="room7">Room 7:Telephone Operator Area</option>
+                <option value="room8">Room 8:Statistical Section</option>
+                <option value="room9">Room 9:Hospital Section</option>
+                <option value="room10">Room 10:Cashier's Room</option>
+                <option value="room11">Room 11:Store Section</option>
+                <option value="room12">Room 12:Inward Section</option>
+                <option value="room13">Room 13:Account Section</option>
+                <option value="room14">Room 14:Medicine Store Section</option>
+                <option value="room15">Room 15:Establishment Section</option>
+                <option value="room16">Room 16:Statistical Officer's Room</option>
+                <option value="room17">Room 17:WHO wing</option>
+                <option value="room18">Room 18:Vaccine/Medicine Store room</option>
+                <option value="room19">Room 19:NHM Section</option>
+                <option value="room20">Room 20:Hirkani Room</option>
+                <option value="room21">Room 21:Nutrition Bureau</option>
+                <option value="room22">Room 22:Women's Washroom</option>
+                <option value="room23">Room 23:Men's Washroom</option>
+                <option value="entrance">Entrance</option>
+                <option value="water">Drinking Water</option>
+            </select>
+            <button id="youAreHereBtn">Set 'You Are Here'</button>
+        </div>
+        
+        <div class="map-container" id="mapContainer">
+            <div class="map-content" id="mapContent">
+                <!-- Road at the top -->
+                <div class="road" style="top: 20px; left: 50px; width: 800px; height: 40px;">Road</div>
+                
+                <!-- Main corridors -->
+                <div class="corridor" style="top: 180px; left: 50px; width: 900px; height: 40px;"></div>
+                <div class="corridor" style="top: 330px; left: 490px; width: 160px; height: 40px;"></div>
+                <div class="corridor" style="top: 580px; left: 50px; width: 75px; height: 40px;"></div>
+                            
+                <!-- Vertical corridors -->
+                <div class="corridor" style="top: 180px; left: 450px; width: 40px; height: 600px;"></div>
+                <div class="corridor" style="top: 180px; left: 650px; width: 40px; height: 190px;"></div>
+                <div class="corridor" style="top: 220px; left: 125px; width: 40px; height: 820px;"></div>
+                
+                <!-- Entrance -->
+                <div class="entrance" id="entrance" style="top: 60px; left: 200px; width: 238px; height: 120px;">ENTRANCE</div>
+                
+                <!-- Rooms -->
+                <!-- Room 1 as a single L-shaped unit -->
+                <div id="room1" class="room" style="top: 220px; left: 690px; width: 160px; height: 150px;">Room 1</div>
+                <div class="l-shaped-room" id="room1-extension" style="top: 370px; left: 650px; width: 200px; height: 100px;"></div>
+                
+                <div class="room" id="room2" style="top: 70px; left: 700px; width: 87.5px; height: 110px;">Room 2</div>
+                <div class="room" id="room3" style="top: 70px; left: 615px; width: 87.5px; height: 110px;">Room 3</div>
+                <div class="room" id="room4" style="top: 70px; left: 440px; width: 175px; height: 110px;">Room 4</div>
+                <div class="room" id="room5" style="top: 220px; left: 550px; width: 100px; height: 110px;">Room 5</div>
+                <div class="room" id="room6" style="top: 370px; left: 490px; width: 160px; height: 100px;">Room 6</div>
+                <div class="room" id="room7" style="top: 220px; left: 490px; width: 60px; height: 110px;">Room 7</div>
+
+                <div class="room" id="room8" style="top: 220px; left: 165px; width: 285px; height: 110px;">Room 8</div>
+                <div class="room" id="room9" style="top: 330px; left: 165px; width: 285px; height: 70px;">Room 9</div>
+                <div class="room" id="room10" style="top: 400px; left: 290px; width: 160px; height: 80px;">Room 10</div>
+                <div class="room" id="room11" style="top: 480px; left: 350px; width: 100px; height: 50px;">Room 11</div>
+                 
+                <div class="room" id="room11-extension" style="top: 480px; left: 165px; width: 185px; height: 100px;"></div>
+
+                <div class="room" id="room12" style="top: 530px; left: 350px; width: 100px; height: 50px;">Room 12</div>
+                <div class="room" id="room13" style="top: 580px; left: 165px; width: 285px; height: 100px;">Room 13</div>
+                <div class="room" id="room14" style="top: 680px; left: 165px; width: 285px; height: 100px;">Room 14</div>
+                <div class="room" id="room15" style="top: 780px; left: 165px; width: 325px; height: 100px;">Room 15</div>
+
+                <div class="room" id="room16" style="top: 220px; left: 50px; width: 75px; height: 75px;">Room 16</div>
+                <div class="room" id="room17" style="top: 295px; left: 50px; width: 75px; height: 75px;">Room 17</div>
+                <div class="room" id="room18" style="top: 220px; left: 20px; width: 30px; height: 75px;">Room 18</div>
+                <div class="room" id="room19" style="top: 220px; left: 900px; width: 50px; height: 110px;">Room 19</div>
+                <div class="room" id="room20" style="top: 400px; left: 165px; width: 125px; height: 80px;">Room 20</div>
+                <div class="room" id="room21" style="top: 620px; left: 20px; width: 105px; height: 50px;">Room 21</div>
+                <div class="room" id="room22" style="top: 880px; left: 165px; width: 285px; height: 80px;">Room 22</div>
+                <div class="room" id="room23" style="top: 960px; left: 165px; width: 285px; height: 80px;">Room 23</div>
+                
+                <!-- Water cooler -->
+                <div class="water" id="water" style="top: 600px; left: 470px; width: 30px; height: 30px;">Water</div>
+                
+                <!-- Doors -->
+                <!-- Entrance door -->
+                <div class="door" id="door-entrance" style="top: 180px; left: 260px; width: 120px;"></div>
+                <div class="door" id="door-entrance" style="top: 55px; left: 260px; width: 120px;"></div>
+                <!-- Room doors -->
+                <div class="door vertical" id="door-room1" style="top: 280px; left: 685px; height: 35px;"></div>
+                <div class="door" id="door-room2" style="top: 180px; left: 705px;"></div>
+                <div class="door" id="door-room3" style="top: 180px; left: 680px;"></div>
+                <div class="door" id="door-room4" style="top: 180px; left: 585px;"></div>
+                <div class="door" id="door-room4" style="top: 180px; left: 450px;"></div>
+                <div class="door" id="door-room5" style="top: 330px; left: 585px; width: 40px;"></div>
+                <div class="door" id="door-room6" style="top: 370px; left: 500px; width: 30px;"></div>
+                <div class="door" id="door-room7" style="top: 330px; left: 500px;"></div>
+                <div class="door" id="door-room8" style="top: 220px; left: 290px; width: 40px;"></div>
+                <div class="door vertical" id="door-room9" style="top: 340px; left: 450px;"></div>
+                <div class="door vertical" id="door-room10" style="top: 420px; left: 450px;"></div>
+                <div class="door vertical" id="door-room11" style="top: 505px; left: 450px;"></div>
+                <div class="door vertical" id="door-room12" style="top: 555px; left: 450px;"></div>
+                <div class="door vertical" id="door-room13" style="top: 590px; left: 450px;"></div>
+                <div class="door vertical" id="door-room13" style="top: 590px; left: 165px;"></div>
+                <div class="door vertical" id="door-room14" style="top: 690px; left: 450px;"></div>
+                <div class="door vertical" id="door-room14" style="top: 690px; left: 165px;"></div>
+                <div class="door vertical" id="door-room15" style="top: 850px; left: 165px;"></div>
+                <div class="door vertical" id="door-room15" style="top: 785px; left: 165px;"></div>
+                <div class="door" id="door-room15" style="top: 780px; left: 455px; width: 25px;"></div>
+                <div class="door" id="door-room16" style="top: 220px; left: 55px;"></div>
+                <div class="door" id="door-room17" style="top: 290px; left: 55px;"></div>
+                <div class="door" id="door-room18" style="top: 220px; left: 30px;"></div>
+                <div class="door" id="door-room19" style="top: 220px; left: 920px;"></div>
+                <div class="door vertical" id="door-room20" style="top: 440px; left: 165px;"></div>
+                <div class="door" id="door-room21" style="top: 620px; left: 72px;"></div>
+                <div class="door vertical" id="door-room22" style="top: 920px; left: 165px;"></div>
+                <div class="door vertical" id="door-room23" style="top: 1000px; left: 165px;"></div>
+                
+                <!-- You are here marker -->
+                <div class="you-are-here" id="youAreHere"></div>
+            </div>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: rgba(136, 191, 184, 0.5);"></div>
+                <span>Rooms</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: rgba(242, 227, 240, 0.7);"></div>
+                <span>Corridors</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: rgba(100, 200, 100, 0.7);"></div>
+                <span>Entrance</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: rgba(100, 180, 255, 0.7);"></div>
+                <span>Water</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color door"></div>
+                <span>Doors</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: rgba(255, 215, 0, 0.7);"></div>
+                <span>Selected</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: red; border-radius: 50%;"></div>
+                <span>You Are Here</span>
+            </div>
+        </div>
+       <div class="employee-list" id="employeeList">
+               <h3>Employees in Selected Room</h3>
+               <div id="employeeContent"></div>
+          </div>
+    </div>
+
+    <script>
+        // Employee data for each room
+const employeeData = {
+    room1: [
+        { name: "Dr. Shashikant Shambharkar", designation: "Deputy Director", responsibility: "Oversees health service operations" },
+        
+    ],
+    room2: [
+        { name: "Dr. Pramod Gawai", designation: "Assistant Director (Medical)", responsibility: "Supervises medical programs" }
+    ],
+    room3: [
+        { name: "Mr. Sandeep Bangade", designation: "Chief Administrative Officer", responsibility: "Handles administrative operations" }
+    ],
+    
+    room5: [
+        { name: "Mr. Aman Khan", designation: "Peon", responsibility: "Assists visitors" }
+    ],
+    room6: [
+        { name: "Mr. Abhijit Tekam", designation: "Personal Assistant", responsibility: "Assists Deputy Director Sir" }
+    ],
+    room7: [
+        { name: "Mr.xyz1 ", designation: "Telephone Operator", responsibility: "Manages calls" }
+    ],
+    room8: [
+        { name: "Mr. Rahul Harinkhede", designation: "Statistical Assistant", responsibility: "Data Analysis/Handling/Technical Work" },
+        { name: "Ms. Lekurwale", designation: "Senior Clerk", responsibility: "Planing Table" },
+        { name: "Mr. Suraj Phule", designation: "Statistical Investigator", responsibility: "Data Analysis/Handling/Technical Work" },
+        { name: "Mr. Madhukar Tikhe", designation: "Health Inspector", responsibility: "Regarding VBD/Navsanjivani Prog."},
+        { name: "Mr. Prakash Tembhurne", designation: "Health Inspector", responsibility: "Regarding VBD/LAQ"},
+        { name: "Mr. Sanjay Malbe", designation: "Health Inspector", responsibility: "Regarding VBD reporting"},
+
+],
+    room9: [
+        { name: "Mr. Pawan Kulthe", designation: "Senior Clerk", responsibility: "Coordinates hospital programs" }
+    ],
+    room10: [
+        { name: "Mr. Kubade", designation: "Cashier", responsibility: "Handles financial transactions/Salary Bill" }
+    ],
+    room11: [
+        { name: "Mr. Supe", designation: "Assistant Superintendent", responsibility: "Store Manager" }
+    ],
+    room12: [
+        { name: "Mr. Mashram", designation: "Senior Clerk", responsibility: "Processes incoming documents" }
+    ],
+    room13: [
+        { name: "Ms. Pande", designation: "Office Superintendent", responsibility: "Supervising/Manages financial records" },
+        { name: "Ms. Titirmare", designation: "Senior Clerk", responsibility: "Sevarth" }
+    ],
+    room14: [
+        { name: "Mr. Kawade", designation: "Pharmacist Officer", responsibility: "Medicine Store Supervisor" }
+    ],
+    room15: [
+        { name: "Mr. Jitendra Nikhade", designation: "Office Superintendent", responsibility: "Supervising/Manages employee records" }
+    ],
+    room16: [
+        { name: "Vaccant", designation: "Statistical Officer", responsibility: "Leads statistical analysis" }
+    ],
+    room17: [
+        { name: "Dr.Sajid", designation: "WHO Coordinator", responsibility: "Liaises with WHO" }
+    ],
+    
+    room19: [
+        { name: "Mr. Manish Nandanwar", designation: "CPM", responsibility: "Manages health mission projects" }
+    ],
+    
+    room21: [
+        { name: "Dr. Rathod", designation: "Senior Scientific Officer", responsibility: "Supervising/Manages nutrition programs" }
+    ],
+     room4: [],
+    room20: [],
+    room18: [],
+    room22: [],
+    room23: [],
+    entrance: [],
+    water: []
+};
+
+// Function to display employee list for a room
+function displayEmployeeList(roomId) {
+    const employeeContent = document.getElementById('employeeContent');
+    const employees = employeeData[roomId] || [];
+    
+    if (employees.length === 0) {
+        employeeContent.innerHTML = '<p class="no-employees">No employees assigned to this area.</p>';
+        return;
+    }
+    
+    let tableHTML = `
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Designation</th>
+                    <th>Responsibility</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+    
+    employees.forEach(employee => {
+        tableHTML += `
+            <tr>
+                <td>${employee.name}</td>
+                <td>${employee.designation}</td>
+                <td>${employee.responsibility}</td>
+            </tr>
+        `;
+    });
+    
+    tableHTML += `
+            </tbody>
+        </table>
+    `;
+    
+    employeeContent.innerHTML = tableHTML;
+}
+
+// Initialize current scale
+let currentScale = 1.0;
+const mapContent = document.getElementById('mapContent');
+
+// Initialize pointer state
+let pointerActive = false;
+let pointerX = 0;
+let pointerY = 0;
+
+// Initialize touch variables for pinch-to-zoom
+let initialDistance = 0;
+let initialScale = 1;
+
+// Get elements
+const youAreHere = document.getElementById('youAreHere');
+const mapContainer = document.getElementById('mapContainer');
+const youAreHereBtn = document.getElementById('youAreHereBtn');
+const destinationSelect = document.getElementById('destination');
+
+// Make sure DOM is loaded before attaching events
+document.addEventListener('DOMContentLoaded', function() {
+    // Add event listeners
+    youAreHereBtn.addEventListener('click', setYouAreHere);
+    
+    // Auto highlight when dropdown changes
+    destinationSelect.addEventListener('change', highlightDestination);
+    
+    // Add pinch-to-zoom functionality
+    mapContainer.addEventListener('touchstart', handlePinchStart, { passive: false });
+    mapContainer.addEventListener('touchmove', handlePinchMove, { passive: false });
+    mapContainer.addEventListener('touchend', handlePinchEnd, { passive: false });
+    
+    // Make rooms clickable
+    document.querySelectorAll('.room, .water, .entrance, .l-shaped-room').forEach(element => {
+        element.addEventListener('click', function() {
+            let roomId = this.id;
+            let roomName = this.textContent.trim();
+            
+            // Special case for room1 extension
+            if (roomId === 'room1-extension') {
+                roomId = 'room1';
+                roomName = 'Room 1';
+            }
+            
+            // Set dropdown value
+            destinationSelect.value = roomId;
+            
+            // Highlight the room
+            highlightDestination();
+            
+            // Display employee list
+            displayEmployeeList(roomId);
+            
+            // Alert user
+            alert('You selected: ' + roomName);
+        });
+    });
+});
+
+// Function to highlight selected destination
+function highlightDestination() {
+    // Clear previous highlights
+    document.querySelectorAll('.room, .water, .entrance, .l-shaped-room, .door').forEach(element => {
+        element.classList.remove('highlight');
+    });
+    
+    // Get selected value
+    const destination = destinationSelect.value;
+    
+    if (destination) {
+        // Handle Room 1 special case
+        if (destination === 'room1') {
+            document.getElementById('room1').classList.add('highlight');
+            document.getElementById('room1-extension').classList.add('highlight');
+            
+            // Only try to highlight door if it exists
+            const door = document.getElementById('door-room1');
+            if (door) {
+                door.classList.add('highlight');
+            }
+            
+            scrollToElement('room1');
+        } else {
+            const element = document.getElementById(destination);
+            if (element) {
+                element.classList.add('highlight');
+                
+                // Highlight the associated door if it exists
+                const door = document.getElementById('door-' + destination);
+                if (door) {
+                    door.classList.add('highlight');
+                }
+                
+                scrollToElement(destination);
+            }
+        }
+        
+        // Display employee list for the selected room
+        displayEmployeeList(destination);
+    } else {
+        // Clear employee list if no destination is selected
+        document.getElementById('employeeContent').innerHTML = '';
+    }
+}
+
+// Function to set "You Are Here" marker
+function setYouAreHere() {
+    // Position at entrance
+    positionYouAreHere(360, 120);
+    
+    // Show marker
+    youAreHere.classList.add('active');
+    
+    // Enable mobile touch functionality
+    enableTouchForMarker();
+    
+    // Scroll to the marker
+    scrollToPosition(360, 120);
+}
+
+// Position the marker
+function positionYouAreHere(x, y) {
+    youAreHere.style.left = x + 'px';
+    youAreHere.style.top = y + 'px';
+    pointerX = x;
+    pointerY = y;
+}
+
+// Enable touch for marker
+function enableTouchForMarker() {
+    // Add event listeners for touch
+    youAreHere.addEventListener('touchstart', handleMarkerTouchStart, { passive: false });
+    mapContainer.addEventListener('touchmove', handleMarkerTouchMove, { passive: false });
+    mapContainer.addEventListener('touchend', handleMarkerTouchEnd, { passive: false });
+}
+
+// Handle marker touch start
+function handleMarkerTouchStart(e) {
+    pointerActive = true;
+    e.stopPropagation(); // Prevent other touch handlers
+}
+
+// Handle marker touch move
+function handleMarkerTouchMove(e) {
+    if (pointerActive) {
+        e.preventDefault(); // Prevent scrolling
+        
+        const touch = e.touches[0];
+        const rect = mapContainer.getBoundingClientRect();
+        const x = (touch.clientX - rect.left + mapContainer.scrollLeft) / currentScale;
+        const y = (touch.clientY - rect.top + mapContainer.scrollTop) / currentScale;
+        
+        // Update marker position
+        positionYouAreHere(x, y);
+    }
+}
+
+// Handle marker touch end
+function handleMarkerTouchEnd(e) {
+    pointerActive = false;
+}
+
+// Scroll to element
+function scrollToElement(elementId) {
+    const element = document.getElementById(elementId);
+    if (element) {
+        const rect = element.getBoundingClientRect();
+        const centerX = element.offsetLeft + (element.offsetWidth / 2);
+        const centerY = element.offsetTop + (element.offsetHeight / 2);
+        
+        scrollToPosition(centerX, centerY);
+    }
+}
+
+// Scroll to position
+function scrollToPosition(x, y) {
+    const viewportWidth = mapContainer.clientWidth;
+    const viewportHeight = mapContainer.clientHeight;
+    
+    mapContainer.scrollTo({
+        left: x * currentScale - (viewportWidth / 2),
+        top: y * currentScale - (viewportHeight / 2),
+        behavior: 'smooth'
+    });
+}
+
+// Handle pinch-to-zoom start
+function handlePinchStart(e) {
+    if (e.touches.length === 2) {
+        e.preventDefault();
+        
+        // Calculate initial distance between the two touch points
+        const touch1 = e.touches[0];
+        const touch2 = e.touches[1];
+        initialDistance = Math.hypot(
+            touch2.clientX - touch1.clientX,
+            touch2.clientY - touch1.clientY
+        );
+        
+        initialScale = currentScale;
+    }
+}
+
+// Handle pinch-to-zoom move
+function handlePinchMove(e) {
+    if (e.touches.length === 2 && initialDistance > 0) {
+        e.preventDefault();
+        
+        // Calculate current distance between the two touch points
+        const touch1 = e.touches[0];
+        const touch2 = e.touches[1];
+        const currentDistance = Math.hypot(
+            touch2.clientX - touch1.clientX,
+            touch2.clientY - touch1.clientY
+        );
+        
+        // Calculate scale factor
+        const scaleFactor = currentDistance / initialDistance;
+        currentScale = Math.min(Math.max(initialScale * scaleFactor, 0.5), 3.0);
+        
+        // Apply zoom
+        applyZoom();
+    }
+}
+
+// Handle pinch-to-zoom end
+function handlePinchEnd(e) {
+    initialDistance = 0;
+}
+
+// Apply zoom
+function applyZoom() {
+    mapContent.style.transform = `scale(${currentScale})`;
+    mapContent.style.transformOrigin = 'top left';
+}
+
+// Call function to display initial empty employee list
+displayEmployeeList('');
+    </script>
+</body>
+</html>
