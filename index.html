@@ -225,6 +225,41 @@
              color: #666;
              padding: 8px;
        }
+/* Add these animation and highlight styles for employee section */
+.employee-list {
+    transition: background-color 0.5s ease, box-shadow 0.5s ease;
+}
+
+.highlight-section {
+    background-color: #fffde7;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
+    animation: pulse 1.5s ease;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 rgba(255, 215, 0, 0.7); }
+    50% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.7); }
+    100% { box-shadow: 0 0 0 rgba(255, 215, 0, 0.7); }
+}
+
+.employee-list h3 {
+    font-size: 18px;
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+/* Add notification text that appears when room is selected */
+.employee-list::before {
+    content: attr(data-notification);
+    display: block;
+    text-align: center;
+    color: #4CAF50;
+    font-weight: bold;
+    padding: 5px 0;
+    font-size: 14px;
+}
     </style>
 </head>
 <body>
@@ -250,7 +285,7 @@
                 <option value="room9">Room 9:Hospital Section</option>
                 <option value="room10">Room 10:Cashier's Room</option>
                 <option value="room11">Room 11:Store Section</option>
-                <option value="room12">Room 12:Inward Section</option>
+                <option value="room12">Room 12:Inwart Section</option>
                 <option value="room13">Room 13:Account Section</option>
                 <option value="room14">Room 14:Medicine Store Section</option>
                 <option value="room15">Room 15:Establishment Section</option>
@@ -284,40 +319,40 @@
                 <div class="corridor" style="top: 220px; left: 125px; width: 40px; height: 900px;"></div>
                 
                 <!-- Entrance -->
-                <div class="entrance" id="entrance" style="top: 60px; left: 200px; width: 238px; height: 120px;">ENTRANCE</div>
+                <div class="entrance" id="entrance" style="top: 60px; left: 200px; width: 238px; height: 120px;">ENTRANCE HALL</div>
                 
                 <!-- Rooms -->
                 <!-- Room 1 as a single L-shaped unit -->
-                <div id="room1" class="room" style="top: 220px; left: 690px; width: 160px; height: 150px;">Room 1</div>
+                <div id="room1" class="room" style="top: 220px; left: 690px; width: 160px; height: 150px;">Deputy Director's Chamber</div>
                 <div class="l-shaped-room" id="room1-extension" style="top: 370px; left: 650px; width: 200px; height: 100px;"></div>
                 
-                <div class="room" id="room2" style="top: 70px; left: 700px; width: 87.5px; height: 110px;">Room 2</div>
-                <div class="room" id="room3" style="top: 70px; left: 615px; width: 87.5px; height: 110px;">Room 3</div>
-                <div class="room" id="room4" style="top: 70px; left: 440px; width: 175px; height: 110px;">Room 4</div>
-                <div class="room" id="room5" style="top: 220px; left: 550px; width: 100px; height: 110px;">Room 5</div>
-                <div class="room" id="room6" style="top: 370px; left: 490px; width: 160px; height: 100px;">Room 6</div>
-                <div class="room" id="room7" style="top: 220px; left: 490px; width: 60px; height: 110px;">Room 7</div>
+                <div class="room" id="room2" style="top: 70px; left: 700px; width: 87.5px; height: 110px;">ADHS Room</div>
+                <div class="room" id="room3" style="top: 70px; left: 615px; width: 87.5px; height: 110px;">CAO Room</div>
+                <div class="room" id="room4" style="top: 70px; left: 440px; width: 175px; height: 110px;">VC Room</div>
+                <div class="room" id="room5" style="top: 220px; left: 550px; width: 100px; height: 110px;">Visitor's Waiting Area</div>
+                <div class="room" id="room6" style="top: 370px; left: 490px; width: 160px; height: 100px;">Personal Assistant Room</div>
+                <div class="room" id="room7" style="top: 220px; left: 490px; width: 60px; height: 110px;">Telephone Ope.</div>
 
-                <div class="room" id="room8" style="top: 220px; left: 165px; width: 285px; height: 110px;">Room 8</div>
-                <div class="room" id="room9" style="top: 330px; left: 165px; width: 285px; height: 70px;">Room 9</div>
-                <div class="room" id="room10" style="top: 400px; left: 290px; width: 160px; height: 80px;">Room 10</div>
-                <div class="room" id="room11" style="top: 480px; left: 350px; width: 100px; height: 50px;">Room 11</div>
+                <div class="room" id="room8" style="top: 220px; left: 165px; width: 285px; height: 110px;">Statistical Section</div>
+                <div class="room" id="room9" style="top: 330px; left: 165px; width: 285px; height: 70px;">Hospital Section</div>
+                <div class="room" id="room10" style="top: 400px; left: 290px; width: 160px; height: 80px;">Cashier Room</div>
+                <div class="room" id="room11" style="top: 480px; left: 350px; width: 100px; height: 50px;">Store Sec.</div>
                  
-                <div class="room" id="room11-extension" style="top: 480px; left: 165px; width: 185px; height: 100px;"></div>
+                <div class="room" id="room11-extension" style="top: 480px; left: 165px; width: 185px; height: 100px;">Store Room</div>
 
-                <div class="room" id="room12" style="top: 530px; left: 350px; width: 100px; height: 50px;">Room 12</div>
-                <div class="room" id="room13" style="top: 580px; left: 165px; width: 285px; height: 100px;">Room 13</div>
-                <div class="room" id="room14" style="top: 680px; left: 165px; width: 285px; height: 100px;">Room 14</div>
-                <div class="room" id="room15" style="top: 780px; left: 165px; width: 325px; height: 170px;">Room 15</div>
+                <div class="room" id="room12" style="top: 530px; left: 350px; width: 100px; height: 50px;">Inwart Section</div>
+                <div class="room" id="room13" style="top: 580px; left: 165px; width: 285px; height: 100px;">Account Section</div>
+                <div class="room" id="room14" style="top: 680px; left: 165px; width: 285px; height: 100px;">Medicine Store Section</div>
+                <div class="room" id="room15" style="top: 780px; left: 165px; width: 325px; height: 170px;">Establishment Section</div>
 
-                <div class="room" id="room16" style="top: 220px; left: 50px; width: 75px; height: 75px;">Room 16</div>
-                <div class="room" id="room17" style="top: 295px; left: 50px; width: 75px; height: 75px;">Room 17</div>
-                <div class="room" id="room18" style="top: 220px; left: 20px; width: 30px; height: 75px;">Room 18</div>
-                <div class="room" id="room19" style="top: 220px; left: 900px; width: 50px; height: 110px;">Room 19</div>
-                <div class="room" id="room20" style="top: 400px; left: 165px; width: 125px; height: 80px;">Room 20</div>
-                <div class="room" id="room21" style="top: 620px; left: 20px; width: 105px; height: 50px;">Room 21</div>
-                <div class="room" id="room22" style="top: 950px; left: 165px; width: 180px; height: 80px;">Room 22</div>
-                <div class="room" id="room23" style="top: 1030px; left: 165px; width: 180px; height: 80px;">Room 23</div>
+                <div class="room" id="room16" style="top: 220px; left: 50px; width: 75px; height: 75px;">SO Room</div>
+                <div class="room" id="room17" style="top: 295px; left: 50px; width: 75px; height: 75px;">WHO Section</div>
+                <div class="room" id="room18" style="top: 220px; left: 0px; width: 50px; height: 75px;">Vac./Med. Store Room</div>
+                <div class="room" id="room19" style="top: 220px; left: 900px; width: 50px; height: 110px;">NHM Section</div>
+                <div class="room" id="room20" style="top: 400px; left: 165px; width: 125px; height: 80px;">Hirakani Room</div>
+                <div class="room" id="room21" style="top: 620px; left: 20px; width: 105px; height: 50px;">Nutrition Bureau</div>
+                <div class="room" id="room22" style="top: 950px; left: 165px; width: 180px; height: 80px;">Women's Washroom</div>
+                <div class="room" id="room23" style="top: 1030px; left: 165px; width: 180px; height: 80px;">Men's Washroom</div>
                 
                 <!-- Water cooler -->
                 <div class="water" id="water" style="top: 600px; left: 470px; width: 30px; height: 30px;">Water</div>
@@ -415,7 +450,7 @@ const employeeData = {
         { name: "Mr. Aman Khan", designation: "Peon", responsibility: "Assists visitors" }
     ],
     room6: [
-        { name: "Mr. Abhijit Tekam", designation: "Personal Assistant", responsibility: "Assists Deputy Director Sir" }
+        { name: "Mr. Abhijit Tekam", designation: "Higher Grade Stenographer", responsibility: "Personal Assistant to Dy. Director" }
     ],
     room7: [
         { name: "Mr.xyz1 ", designation: "Telephone Operator", responsibility: "Manages calls" }
@@ -473,6 +508,21 @@ const employeeData = {
     entrance: [],
     water: []
 };
+// Function to highlight employee section
+function highlightEmployeeSection() {
+    const employeeList = document.getElementById('employeeList');
+    
+    // Add highlight class
+    employeeList.classList.add('highlight-section');
+    
+    // Remove highlight class after animation completes
+    setTimeout(() => {
+        employeeList.classList.remove('highlight-section');
+    }, 1500);
+    
+    // Scroll to employee section
+    employeeList.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
 
 // Function to display employee list for a room
 function displayEmployeeList(roomId) {
@@ -481,39 +531,42 @@ function displayEmployeeList(roomId) {
     
     if (employees.length === 0) {
         employeeContent.innerHTML = '<p class="no-employees">No employees assigned to this area.</p>';
-        return;
+    } else {
+        let tableHTML = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Designation</th>
+                        <th>Responsibility</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+        
+        employees.forEach(employee => {
+            tableHTML += `
+                <tr>
+                    <td>${employee.name}</td>
+                    <td>${employee.designation}</td>
+                    <td>${employee.responsibility}</td>
+                </tr>
+            `;
+        });
+        
+        tableHTML += `
+                </tbody>
+            </table>
+        `;
+        
+        employeeContent.innerHTML = tableHTML;
     }
     
-    let tableHTML = `
-        <table>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Designation</th>
-                    <th>Responsibility</th>
-                </tr>
-            </thead>
-            <tbody>
-    `;
-    
-    employees.forEach(employee => {
-        tableHTML += `
-            <tr>
-                <td>${employee.name}</td>
-                <td>${employee.designation}</td>
-                <td>${employee.responsibility}</td>
-            </tr>
-        `;
-    });
-    
-    tableHTML += `
-            </tbody>
-        </table>
-    `;
-    
-    employeeContent.innerHTML = tableHTML;
+    // Call highlight function only if a room is selected
+    if (roomId) {
+        highlightEmployeeSection();
+    }
 }
-
 // Initialize current scale
 let currentScale = 1.0;
 const mapContent = document.getElementById('mapContent');
@@ -611,11 +664,32 @@ function highlightDestination() {
             }
         }
         
+        // Get room name for notification
+        let roomName = '';
+        if (destination === 'room1') {
+            roomName = "Deputy Director's Chamber";
+        } else if (destination === 'entrance') {
+            roomName = "Main Entrance";
+        } else if (destination === 'water') {
+            roomName = "Drinking Water";
+        } else {
+            // Extract room name from dropdown option text
+            const selectedOption = destinationSelect.options[destinationSelect.selectedIndex];
+            if (selectedOption) {
+                roomName = selectedOption.text.split(':')[1] || selectedOption.text;
+            }
+        }
+        
+        // Add notification to employee list
+        document.getElementById('employeeList').setAttribute('data-notification', 
+            `✓ Showing staff for ${roomName}`);
+        
         // Display employee list for the selected room
         displayEmployeeList(destination);
     } else {
         // Clear employee list if no destination is selected
         document.getElementById('employeeContent').innerHTML = '';
+        document.getElementById('employeeList').setAttribute('data-notification', '');
     }
 }
 
@@ -752,6 +826,7 @@ function applyZoom() {
 
 // Call function to display initial empty employee list
 displayEmployeeList('');
+
     </script>
 </body>
 </html>
